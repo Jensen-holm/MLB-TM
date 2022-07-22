@@ -35,7 +35,7 @@ hide_streamlit_style = """
 st.markdown(hide_streamlit_style, unsafe_allow_html=True) 
 
 # import the player data dict dictionaries for the keys so we can have options in the select box
-sim_data_db = sqlite3.connect("updatesim/Sim_Data.db")
+sim_data_db = sqlite3.connect("Sim_Data.db")
 
 # get list of all table names with the cursor to put into the st.select_box
 all_teams_array = np.array(pd.read_sql_query("SELECT name FROM sqlite_master WHERE type='table'", sim_data_db))
