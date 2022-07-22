@@ -49,6 +49,7 @@ all_teams.insert(0, "Start typing and select team")
 
 # user unput buttons and sliders
 if selected_page == "Main":
+    st.text("\n(Currently teams 1973 through 2021 are available, rest in progress.)")
     team1 = st.selectbox(label = "Team 1", options = all_teams)
     team2 = st.selectbox(label = "Team 2", options = all_teams)
 
@@ -128,4 +129,4 @@ if init_button:
 st.text('\n\n\n\n\n\n\n\n\n')
 st.write(f'\n\nFeedback and report bugs: holmj@mail.gvsu.edu')
 st.write('\nSocials: [Twitter](https://twitter.com/JensenH_) [GitHub](https://github.com/Jensen-holm) [Linkedin](https://www.linkedin.com/in/jensen-holm-3584981bb/)')
-st.write('[Documentation / Code](https://github.com/Jensen-holm/MLBAPP)')
+st.write('[Documentation / Code](https://github.com/Jensen-holm/MLB-APP)')
