@@ -58,7 +58,6 @@ if selected_page == "Main":
 # initialize simulation button
 init_button = st.button("Go", help = "Begin Simulation")
 if init_button:
-
     # potential errors
     if selected_page == "Docs":
         st.error("Cannot initialize simulation from 'Docs' page.")

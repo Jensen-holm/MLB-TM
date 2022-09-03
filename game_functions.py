@@ -2,8 +2,6 @@ import streamlit as st
 import random
 import pandas as pd
 
-""" Add per 162 game stats for each player for download """
-''' first we should probably do session state tho '''
 
 pbp_data = []
 pbp_cols = ["Hitter Team", "Pitcher Team", "Hitter", "Pitcher", "PA Result",  "Game#", "Inning"]
@@ -85,7 +83,7 @@ def check_bases_occupied(base_state):
 def advance_runners_on_hit(base_state, bases_advanced): # only really for singles and doubles
     runs_scored = 0
     for runner in base_state:
-        if runner != None:
+        if runner:
             new_index = base_state.index(runner) + bases_advanced
             if new_index < len(base_state):
                 base_state[new_index] = runner
@@ -391,8 +389,6 @@ def simulation(num_simulations, home_team, away_team, start_inning = 1, beginnni
     pbp_df = pd.DataFrame(pbp_data, columns = pbp_cols)
 
     # make sure it is this simulation only
-    
-
     # pbp_csv = convert_df(pbp_df)
     # st.download_button("Download Play By Play Data", data = pbp_csv, file_name = "Ball.Sim_pbp.csv")
 
