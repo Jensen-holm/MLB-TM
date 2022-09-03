@@ -3,39 +3,25 @@ import warnings
 warnings.simplefilter(action='ignore')
 
 
-""" I didnt have an error before but now I do have one after messing with this file. """
-""" Do not commit any changes until we get the refractored code to work """
-
-
-class Player:
+class Hitter():
 
     def __init__(self, name, df, team):
+
         self.name = name
         self.df = df
+        self.weird = False
+        self.throws = self.df.at[0, 'Throws']
+        self.bats = self.df.at[0, 'Bats']
         self.team = team
-        self.throws = self.df.at[0, "Throws"]
-        self.bats = self.df.at[0, "Bats"]
 
-        self.weird = self.determine_if_they_are_normal()
-        self.probsr, self.probsl = self.probabilities()
-
-    def determine_if_they_are_normal(self):
-        # meaning if they only have splits versus one type of pitcher or hitter somehow
-        # self.weird will be a check variable to avoid players that may cause errors
+        # meaning if they only have splits versus one type of pitcher somehow
         if len(self.df[self.df['Split'] == 'vs LHP'].index) < 1:
-            return True
+            self.weird = True
         elif len(self.df[self.df['Split'] == 'vs RHP'].index) < 1:
-            return True
-        return False
+            self.weird = True
 
-    def __repr__(self):
-        return f"{self.name} ({self.bats} / {self.throws}) Plays for the {self.team}"
-
-
-class Hitter(Player):
-
-    def __init__(self, name, df, team):
-        super().__init__(name, df, team)
+        if self.weird == False:
+            self.probsr, self.probsl = self.probabilities()
 
         # keep track of statistics
         self.PA = 0
@@ -54,9 +40,6 @@ class Hitter(Player):
         self.RBI = 0
 
     def probabilities(self):
-
-        if self.weird:
-            return None, None
 
         self.df['1B'] = self.df['H'] - (self.df['2B'] + self.df['3B'] + self.df['HR'])
         self.df['ATT'] = self.df['SB'] + self.df['CS']
@@ -77,6 +60,7 @@ class Hitter(Player):
         for col in vlhp.columns:
             if type(vlhp.at[0, col]) != str:
                 probsl.append([col, vlhp.at[0, col] / vlhp.at[0, 'PA']])
+
         return probsr, probsl
 
     def display_rate_stats(self):
@@ -87,10 +71,25 @@ class Hitter(Player):
 
 
 
-class Pitcher(Player):
+class Pitcher():
 
     def __init__(self, name, df, team):
-        super().__init__(name, df, team)
+
+        self.name = name
+        self.df = df
+        self.weird = False
+        self.bats = self.df.at[0, 'Bats']
+        self.throws = self.df.at[0, 'Throws']
+        self.team = team
+
+        # meaning if they only have splits against one kind of hitter somehow
+        if len(self.df[self.df['Split'] == 'vs LHB'].index) < 1:
+            self.weird = True
+        elif len(self.df[self.df['Split'] == 'vs RHB'].index) < 1:
+            self.weird = True
+
+        if self.weird == False:
+            self.probsr, self.probsl = self.probabilities()
         
         # keep track of statistics
         self.BF =  0
@@ -107,15 +106,11 @@ class Pitcher(Player):
         self.triples = 0
         self.HR = 0
     
-    # pitcher specific probability calculation function
     def probabilities(self):
-
-        if self.weird:
-            return None, None
 
         self.df['1B'] = self.df['H'] - (self.df['2B'] + self.df['3B'] + self.df['HR'])
         self.df['ATT'] = self.df['SB'] + self.df['CS']
-        self.df['IPO'] = self.df['PA'] - (self.df['H'] + self.df['BB'] + self.df['HBP'])
+        self.df['IPO'] = self.df['PA'] - (self.df['H'] + self.df['BB'] + self.df['HBP']) # make sure this is correct.
 
         vrhh = self.df[self.df['Split'] == 'vs RHB']
         vlhh = self.df[self.df['Split'] == 'vs LHB']
@@ -123,7 +118,7 @@ class Pitcher(Player):
         vlhh.reset_index(drop = True, inplace = True)
 
         probsr = []
-        probsl = []
+        probsl = []        
 
         for col in vrhh.columns:
             if type(vrhh.at[0, col]) != str:
@@ -144,9 +139,8 @@ class Pitcher(Player):
 
         st.write(f"{self.name}|IP {self.IP}|ERA {era:.2f}|WHIP {whip:.2f}|K/9 {k_9:.2f}|BB/9 {bb_9:.2f}|")        
 
-
-
-class Team:
+# cache teams??
+class Team():
 
     def __init__(self, team_name, year, data_list, lineup_settings):
 
@@ -178,11 +172,13 @@ class Team:
         for name in names:
             player_df = df[df['Name'] == name]
             player_df.reset_index(drop = True, inplace = True)
+
             # then determine if they are a hitter or pitcher based on the split column
             if player_df.at[0, 'Split'] == 'vs RHB':
                 pitchers.append(Pitcher(name, player_df, self))
             elif player_df.at[0, 'Split'] == 'vs RHP':
                 hitters.append(Hitter(name, player_df, self))
+            
         return hitters, pitchers
 
     def set_lineups_auto(self):
@@ -190,8 +186,4 @@ class Team:
         rotation = sorted(self.pitchers, key=lambda x: sum(x.df['PA']), reverse = True)[:6]
         bullpen = [pitcher for pitcher in self.pitchers if pitcher not in rotation] # everyone else goes in the pen
         lineup = sorted(self.hitters, key=lambda x: sum(x.df['PA']), reverse = True)[:9]
-        # filter out players that are missing certain data that is important to the simulation
-        rotation = [player for player in rotation if not player.weird]
-        bullpen = [player for player in bullpen if not player.weird]
-        lineup = [player for player in lineup if not player.weird]
         return lineup, rotation, bullpen
