@@ -15,7 +15,7 @@ def flatten_2d_list(the_list):
     return flat_list
 
 # title and stuff
-st.set_page_config(page_title = 'Ball.Sim (Beta)', page_icon = '⚾️')
+st.set_page_config(page_title = 'Ball.Sim', page_icon = '⚾️')
 st.title('Ball.Sim (Beta)')
 st.write('\nCreated by Jensen Holm')
 st.write('Data Source: [Sports-Reference](https://sports-reference.com)')
@@ -49,7 +49,7 @@ all_teams.insert(0, "Start typing and select team")
 
 # user unput buttons and sliders
 if selected_page == "Main":
-    st.text("\n(Currently teams 1973 through 2021 are available, rest in progress.)")
+    st.text("\n(Teams from 1973 through 2021 are available)")
     team1 = st.selectbox(label = "Team 1", options = all_teams)
     team2 = st.selectbox(label = "Team 2", options = all_teams)
 
