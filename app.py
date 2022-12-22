@@ -16,7 +16,7 @@ def flatten_2d_list(the_list):
 
 # title and stuff
 st.set_page_config(page_title = 'Ball.Sim', page_icon = '⚾️')
-st.title('Ball.Sim (Beta)')
+st.title('Ball.Sim')
 st.write('\nCreated by Jensen Holm')
 st.write('Data Source: [Sports-Reference](https://sports-reference.com)')
 st.write('\n[Donate](https://www.paypal.com/donate/?business=HPLUVQJA6GFMN&no_recurring=0&currency_code=USD)')
